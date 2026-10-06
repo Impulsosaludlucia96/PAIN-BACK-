@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control Diario Lumbar / Isquio - Trail & Running</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 20px; background-color: #f0fdf4; color: #1e293b; }
+        .container { max-width: 520px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        h1 { font-size: 1.3rem; color: #065f46; text-align: center; margin-bottom: 20px; }
+        h2 { font-size: 1.05rem; color: #059669; border-bottom: 2px solid #e2e8f0; padding-bottom: 6px; margin-top: 5px; }
+        .step { display: none; }
+        .step.active { display: block; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.88rem; }
+        .sub-label { font-size: 0.78rem; color: #64748b; font-weight: normal; margin-bottom: 4px; display: block; }
+        input, select, textarea { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; font-family: inherit; }
+        textarea { resize: vertical; min-height: 80px; }
+        .btn-group { display: flex; gap: 10px; margin-top: 20px; }
+        button { flex: 1; padding: 12px; background-color: #059669; color: white; border: none; border-radius: 6px; font-size: 0.95rem; font-weight: bold; cursor: pointer; }
+        button.btn-sec { background-color: #64748b; }
+        button.btn-whatsapp { background-color: #25D366; color: white; margin-top: 15px; width: 100%; font-size: 1rem; }
+        button.btn-export { background-color: #0284c7; color: white; font-size: 0.8rem; padding: 8px; }
+        button.btn-danger { background-color: #dc2626; font-size: 0.8rem; padding: 8px; }
+        #result { margin-top: 20px; padding: 20px; border-radius: 8px; display: none; background: #f8fafc; border: 1px solid #e2e8f0; }
+        .summary-card { background: #fff; border-left: 4px solid #059669; padding: 12px; margin: 10px 0; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); font-size: 0.9rem; line-height: 1.5; }
+        .history-section { margin-top: 30px; border-top: 2px dashed #cbd5e1; padding-top: 15px; }
+        .history-actions { display: flex; gap: 10px; margin-top: 12px; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.78rem; margin-top: 10px; }
+        th, td { border: 1px solid #e2e8f0; padding: 6px; text-align: center; word-break: break-word; }
+        th { background-color: #f1f5f9; }
+        .comment-text { font-style: italic; color: #475569; text-align: left; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Control Lumbar / Isquio - Running</h1>
+
+    <form id="lumbarForm">
+        <!-- PASO 1: DATOS Y CARGA DE CARRERA -->
+        <div class="step active" id="step0">
+            <h2>Paso 1: Identificación y Sesión de Carrera</h2>
+            <div class="form-group">
+                <label for="athleteName">Nombre / ID del Deportista:</label>
+                <input type="text" id="athleteName" placeholder="Ej: Lucía" required>
+            </div>
+            <div class="form-group">
+                <label for="sessionType">¿Qué tipo de entrenamiento has hecho hoy?</label>
+                <select id="sessionType">
+                    <option value="Rodaje Suave / Z1-Z2">Rodaje Suave / Regenerativo</option>
+                    <option value="Series / Calidad / Cambios">Series / Calidad / Ritmo Alto</option>
+                    <option value="Cuesta / Desnivel / Montaña">Cuestas / Desnivel / Trail</option>
+                    <option value="Fuerza / Readaptación">Sesión de Fuerza / Gimnasio</option>
+                    <option value="Descanso Total / Activo">Descanso Total o Movilidad</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="volumeKm">Volumen corrido hoy (km o minutos aprox):</label>
+                <input type="text" id="volumeKm" placeholder="Ej: 10 km o 50 min" required>
+            </div>
+            <div class="form-group">
+                <label for="rpe">Esfuerzo Percibido (RPE de la sesión 0-10):</label>
+                <input type="number" id="rpe" min="0" max="10" value="5">
+            </div>
+            <div class="btn-group">
+                <button type="button" onclick="nextStep(1)">Siguiente</button>
+            </div>
+        </div>
+
+        <!-- PASO 2: COMPORTAMIENTO SINTOMÁTICO LUMBOPÉLVICO -->
+        <div class="step" id="step1">
+            <h2>Paso 2: Comportamiento del Dolor</h2>
+            <div class="form-group">
+                <label>Dolor / Molestia pico durante la carrera (0-10):</label>
+                <input type="number" id="painScore" min="0" max="10" value="0" required>
+            </div>
+            <div class="form-group">
+                <label>Comportamiento del dolor al correr:</label>
+                <select id="painPattern">
+                    <option value="Sin molestias">Sin molestia apreciable</option>
+                    <option value="Molestia inicial que cede al calentar">Aparece al inicio y cede/desaparece corriendo</option>
+                    <option value="Aumenta progresivamente con los km">Aumenta según acumulo kilómetros/tiempo</option>
+                    <option value="Aparece solo en ritmos altos o pendientes">Aparece solo al apretar ritmo o subir/bajar</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Localización e irradiación principal:</label>
+                <select id="painLocation">
+                    <option value="Local en zona lumbar">Exclusivo Zona Lumbar / Sacro</option>
+                    <option value="Isquiotibial alto / Glúteo">Isquiotibial Alto / Subglúteo</option>
+                    <option value="Irradiado hacia el muslo">Lumbar irradiado hacia isquio/pierna</option>
+                    <option value="Sin dolor">Sin dolor hoy</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Rigidez o molestia matutina al levantarse hoy (0-10):</label>
+                <input type="number" id="morningStiffness" min="0" max="10" value="0" required>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn-sec" onclick="nextStep(0)">Anterior</button>
+                <button type="button" onclick="nextStep(2)">Siguiente</button>
+            </div>
+        </div>
+
+        <!-- PASO 3: CUESTIONARIO IRS (BIENESTAR Y RECUPERACIÓN) -->
+        <div class="step" id="step2">
+            <h2>Paso 3: Cuestionario IRS (Bienestar)</h2>
+            <span class="sub-label">Valora de 1 a 7 tu estado general hoy:</span>
+            <div class="form-group">
+                <label>1. Calidad del Sueño (1: Muy mala - 7: Excelente):</label>
+                <input type="number" id="irs_sleep" min="1" max="7" value="5" required>
+            </div>
+            <div class="form-group">
+                <label>2. Fatiga Muscular / General (1: Alta fatiga - 7: Sin fatiga):</label>
+                <input type="number" id="irs_fatigue" min="1" max="7" value="5" required>
+            </div>
+            <div class="form-group">
+                <label>3. Nivel de Estrés / Carga Mental (1: Alto estrés - 7: Sin estrés):</label>
+                <input type="number" id="irs_stress" min="1" max="7" value="5" required>
+            </div>
+            <div class="form-group">
+                <label>4. Estado de Ánimo (1: Muy bajo - 7: Excelente):</label>
+                <input type="number" id="irs_mood" min="1" max="7" value="5" required>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn-sec" onclick="nextStep(1)">Anterior</button>
+                <button type="button" onclick="nextStep(3)">Siguiente</button>
+            </div>
+        </div>
+
+        <!-- PASO 4: KINESIOFOBIA / APRENSIÓN A LA ZANCADA Y FLEXIÓN -->
+        <div class="step" id="step3">
+            <h2>Paso 4: TSK Modificado (Miedo / Aprensión)</h2>
+            <span class="sub-label">Escala: 1 (Totalmente en desacuerdo) a 4 (Totalmente de acuerdo)</span>
+            
+            <div class="form-group">
+                <label>TSK-1: "Tengo miedo de que al alargar la zancada o acelerar el ritmo empeore la zona."</label>
+                <input type="number" id="tsk1" min="1" max="4" value="1" required>
+            </div>
+            <div class="form-group">
+                <label>TSK-2: "Siento aprensión al flexionar la espalda o al impacto continuo del asfalto/bajada."</label>
+                <input type="number" id="tsk2" min="1" max="4" value="1" required>
+            </div>
+            <div class="form-group">
+                <label>TSK-3: "Noto que corro 'protegiendo' la zona o modificando mi técnica de carrera."</label>
+                <input type="number" id="tsk3" min="1" max="4" value="1" required>
+            </div>
+            <div class="form-group">
+                <label>TSK-4: "Si noto un pinchazo o carga en el isquio/lumbar, me cuesta mantener la concentración."</label>
+                <input type="number" id="tsk4" min="1" max="4" value="1" required>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn-sec" onclick="nextStep(2)">Anterior</button>
+                <button type="button" onclick="nextStep(4)">Siguiente</button>
+            </div>
+        </div>
+
+        <!-- PASO 5: OBSERVACIONES Y ENLACE -->
+        <div class="step" id="step4">
+            <h2>Paso 5: Observaciones y Feedback</h2>
+            <div class="form-group">
+                <label>Pregunta Abierta / Observaciones de la sesión:</label>
+                <span class="sub-label">¿En qué momento o terreno ha molestado más? ¿Cómo ha respondido la zona al terminar de enfriar o al sentarte?</span>
+                <textarea id="feedbackNotes" placeholder="Escribe aquí tus sensaciones detalladas..."></textarea>
+            </div>
+            <div class="btn-group">
+                <button type="button" class="btn-sec" onclick="nextStep(3)">Anterior</button>
+                <button type="button" onclick="submitAssessment()">Guardar Registro</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- RESULTADO Y ENVÍO A ENTRENADORA -->
+    <div id="result">
+        <h3 style="margin-top:0; color:#065f46;">Resumen Completado</h3>
+        <div class="summary-card" id="summaryContent"></div>
+        
+        <button type="button" class="btn-whatsapp" onclick="sendWhatsAppReport()">📩 Enviar reporte a la entrenadora (WhatsApp)</button>
+        <button type="button" class="btn-sec" style="margin-top:10px; width: 100%;" onclick="location.reload()">Nuevo Cuestionario</button>
+    </div>
+
+    <!-- HISTÓRICO LOCAL -->
+    <div class="history-section">
+        <h2>Histórico del Corredor</h2>
+        <div id="historyTableContainer">
+            <p style="font-size: 0.85rem; color: #64748b;">No hay registros guardados aún en este dispositivo.</p>
+        </div>
+        <div class="history-actions">
+            <button type="button" class="btn-export" onclick="exportToCSV()">📥 Exportar Excel (CSV)</button>
+            <button type="button" class="btn-danger" onclick="clearHistory()">Borrar Histórico</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentReport = null;
+
+    document.addEventListener("DOMContentLoaded", renderHistory);
+
+    function nextStep(stepNumber) {
+        document.querySelectorAll('.step').forEach(step => step.classList.remove('active'));
+        document.getElementById('step' + stepNumber).classList.add('active');
+    }
+
+    function submitAssessment() {
+        const athleteName = document.getElementById('athleteName').value.trim() || 'Deportista';
+        const sessionType = document.getElementById('sessionType').value;
+        const volumeKm = document.getElementById('volumeKm').value.trim();
+        const rpe = document.getElementById('rpe').value;
+        const painScore = parseInt(document.getElementById('painScore').value);
+        const painPattern = document.getElementById('painPattern').value;
+        const painLocation = document.getElementById('painLocation').value;
+        const morningStiffness = parseInt(document.getElementById('morningStiffness').value);
+
+        // IRS Total (4-28)
+        const irsSleep = parseInt(document.getElementById('irs_sleep').value);
+        const irsFatigue = parseInt(document.getElementById('irs_fatigue').value);
+        const irsStress = parseInt(document.getElementById('irs_stress').value);
+        const irsMood = parseInt(document.getElementById('irs_mood').value);
+        const irsTotal = irsSleep + irsFatigue + irsStress + irsMood;
+
+        // TSK Modificado (4-16)
+        const tsk1 = parseInt(document.getElementById('tsk1').value);
+        const tsk2 = parseInt(document.getElementById('tsk2').value);
+        const tsk3 = parseInt(document.getElementById('tsk3').value);
+        const tsk4 = parseInt(document.getElementById('tsk4').value);
+        const tskTotal = tsk1 + tsk2 + tsk3 + tsk4;
+
+        const notes = document.getElementById('feedbackNotes').value.trim();
+        const dateStr = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: '2-digit' });
+
+        currentReport = {
+            date: dateStr,
+            athlete: athleteName,
+            session: sessionType,
+            volume: volumeKm,
+            rpe: rpe,
+            pain: painScore,
+            pattern: painPattern,
+            location: painLocation,
+            stiffness: morningStiffness,
+            irsTotal: irsTotal,
+            irsDetails: `Sueño:${irsSleep} Fatiga:${irsFatigue} Estrés:${irsStress} Ánimo:${irsMood}`,
+            tskTotal: tskTotal,
+            notes: notes
+        };
+
+        saveRecord(currentReport);
+
+        document.getElementById('lumbarForm').style.display = 'none';
+        const resultDiv = document.getElementById('result');
+        resultDiv.style.display = 'block';
+
+        let tskInterpretation = tskTotal >= 11 ? "⚠️ Aprensión/Guardia neuromuscular alta" : "✅ Confianza de zancada adecuada";
+
+        document.getElementById('summaryContent').innerHTML = `
+            <strong>Deportista:</strong> ${currentReport.athlete}<br>
+            <strong>Sesión:</strong> ${currentReport.session} (${currentReport.volume} | RPE: ${currentReport.rpe})<br>
+            <strong>Dolor / Comportamiento:</strong> EVA ${currentReport.pain}/10 | ${currentReport.pattern}<br>
+            <strong>Localización / Rigidez:</strong> ${currentReport.location} | Rigidez matutina: ${currentReport.stiffness}/10<br>
+            <strong>IRS (Bienestar):</strong> ${currentReport.irsTotal}/28<br>
+            <strong>TSK (Aprensión Zancada):</strong> ${currentReport.tskTotal}/16 (${tskInterpretation})<br>
+            <strong>Observaciones:</strong> ${currentReport.notes || 'Sin notas.'}
+        `;
+
+        renderHistory();
+    }
+
+    function sendWhatsAppReport() {
+        if (!currentReport) return;
+
+        const text = 
+`🏃‍♂️ *REPORTE DIARIO LUMBAR / ISQUIO*
+👤 *Deportista:* ${currentReport.athlete}
+📅 *Fecha:* ${currentReport.date}
+
+🏋️ *Sesión:* ${currentReport.session}
+📏 *Volumen:* ${currentReport.volume} (RPE: ${currentReport.rpe}/10)
+🩺 *Dolor Carrera:* EVA ${currentReport.pain}/10
+🔄 *Comportamiento:* ${currentReport.pattern}
+📍 *Zona:* ${currentReport.location}
+🌅 *Rigidez Matutina:* ${currentReport.stiffness}/10
+
+📊 *RECUPERACIÓN Y ESTRÉS (IRS)*
+• Score Total: ${currentReport.irsTotal}/28
+• Detalle: ${currentReport.irsDetails}
+
+🧠 *KINESIOFOBIA Y ZANCADA (TSK)*
+• Score Aprensión/Miedo: ${currentReport.tskTotal}/16
+
+💬 *OBSERVACIONES:*
+${currentReport.notes || 'Sin observaciones.'}`;
+
+        const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+        window.open(url, '_blank');
+    }
+
+    function saveRecord(record) {
+        let history = JSON.parse(localStorage.getItem('lumbar_history')) || [];
+        history.unshift(record);
+        if (history.length > 30) history.pop();
+        localStorage.setItem('lumbar_history', JSON.stringify(history));
+    }
+
+    function renderHistory() {
+        let history = JSON.parse(localStorage.getItem('lumbar_history')) || [];
+        const container = document.getElementById('historyTableContainer');
+        
+        if (history.length === 0) {
+            container.innerHTML = '<p style="font-size: 0.85rem; color: #64748b;">No hay registros guardados aún en este dispositivo.</p>';
+            return;
+        }
+
+        let html = '<table><thead><tr><th>Fecha</th><th>Sesión</th><th>EVA</th><th>IRS</th><th>TSK</th><th>Notas</th></tr></thead><tbody>';
+        history.forEach(item => {
+            const notesText = item.notes ? `<span class="comment-text">"${item.notes}"</span>` : '<span style="color:#aaa;">-</span>';
+            html += `<tr>
+                <td>${item.date}</td>
+                <td>${item.session} (${item.volume})</td>
+                <td>${item.pain}/10</td>
+                <td>${item.irsTotal}/28</td>
+                <td>${item.tskTotal}/16</td>
+                <td>${notesText}</td>
+            </tr>`;
+        });
+        html += '</tbody></table>';
+        container.innerHTML = html;
+    }
+
+    function exportToCSV() {
+        let history = JSON.parse(localStorage.getItem('lumbar_history')) || [];
+        if (history.length === 0) {
+            alert("No hay datos para exportar.");
+            return;
+        }
+
+        let csv = "Fecha,Deportista,Sesion,Volumen,RPE,Dolor,Comportamiento,Zona,RigidezMatutina,IRS_Total,TSK_Total,Notas\n";
+        history.forEach(r => {
+            const cleanNotes = (r.notes || '').replace(/,/g, ' ');
+            csv += `${r.date},${r.athlete},${r.session},${r.volume},${r.rpe},${r.pain},${r.pattern},${r.location},${r.stiffness},${r.irsTotal},${r.tskTotal},"${cleanNotes}"\n`;
+        });
+
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", `registro_LumbarIsquio_${new Date().toISOString().slice(0,10)}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    function clearHistory() {
+        if (confirm("¿Borrar el histórico lumbar/isquio guardado en este dispositivo?")) {
+            localStorage.removeItem('lumbar_history');
+            renderHistory();
+        }
+    }
+</script>
+</body>
+</html>
